@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Ứng dụng quản lý công việc Todo List"/>
+    <title>TodoApp — Quản lý công việc</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+
+<div class="header">
+    <div class="container">
+        <div class="header-inner">
+            <a href="/" class="logo">
+                <div class="logo-mark">
+                    <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+                </div>
+                <span class="logo-text">TodoApp</span>
+            </a>
+            <button id="btn-open-add" class="btn btn-primary">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Thêm công việc
+            </button>
+        </div>
+    </div>
+</div>
+
+<main class="container">
+
+    <section class="stats-bar">
+        <div class="stats-grid">
+            <div class="stat-card" data-filter-status="" title="Tất cả">
+                <div class="stat-indicator total"></div>
+                <div class="stat-info">
+                    <div class="stat-number" th:text="${stats['total']}">0</div>
+                    <div class="stat-label">Tổng công việc</div>
+                </div>
+            </div>
+            <div class="stat-card" data-filter-status="IN_PROGRESS" title="Đang làm">
+                <div class="stat-indicator progress"></div>
+                <div class="stat-info">
+                    <div class="stat-number" th:text="${stats['inProgress']}">0</div>
+                    <div class="stat-label">Đang làm</div>
+                </div>
+            </div>
+            <div class="stat-card" data-filter-status="DONE" title="Hoàn thành">
+                <div class="stat-indicator done"></div>
+                <div class="stat-info">
+                    <div class="stat-number" th:text="${stats['done']}">0</div>
+                    <div class="stat-label">Hoàn thành</div>
+                </div>
+            </div>
+            <div class="stat-card" title="Quá hạn">
+                <div class="stat-indicator overdue"></div>
+                <div class="stat-info">
+                    <div class="stat-number" th:text="${stats['overdue']}">0</div>
+                    <div class="stat-label">Quá hạn</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="filter-bar">
+            <div class="search-wrapper">
+                <span class="search-icon">
+                    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </span>
+                <input type="text" id="search-input" class="search-input"
+                       placeholder="Tìm kiếm công việc..."
+                       th:value="${currentSearch}" autocomplete="off"/>
+            </div>
+
+            <select id="filter-status" class="filter-select">
+                <option value="">Tất cả trạng thái</option>
+                <option value="TODO"        th:selected="${currentStatus != null and currentStatus.name() == 'TODO'}">Chưa làm</option>
+                <option value="IN_PROGRESS" th:selected="${currentStatus != null and currentStatus.name() == 'IN_PROGRESS'}">Đang làm</option>
+                <option value="DONE"        th:selected="${currentStatus != null and currentStatus.name() == 'DONE'}">Hoàn thành</option>
+            </select>
+
+            <select id="filter-priority" class="filter-select">
+                <option value="">Tất cả độ ưu tiên</option>
+                <option value="LOW"    th:selected="${currentPriority != null and currentPriority.name() == 'LOW'}">Thấp</option>
+                <option value="MEDIUM" th:selected="${currentPriority != null and currentPriority.name() == 'MEDIUM'}">Trung bình</option>
+                <option value="HIGH"   th:selected="${currentPriority != null and currentPriority.name() == 'HIGH'}">Cao</option>
+                <option value="URGENT" th:selected="${currentPriority != null and currentPriority.name() == 'URGENT'}">Khẩn cấp</option>
+            </select>
+
+            <select id="filter-sort" class="filter-select">
+                <option value="createdAt_desc" th:selected="${currentSort == 'createdAt' and currentSortDir == 'desc'}">Mới nhất</option>
+                <option value="createdAt_asc"  th:selected="${currentSort == 'createdAt' and currentSortDir == 'asc'}">Cũ nhất</option>
+                <option value="deadline_asc"   th:selected="${currentSort == 'deadline'  and currentSortDir == 'asc'}">Deadline gần nhất</option>
+                <option value="deadline_desc"  th:selected="${currentSort == 'deadline'  and currentSortDir == 'desc'}">Deadline xa nhất</option>
+                <option value="priority_desc"  th:selected="${currentSort == 'priority'  and currentSortDir == 'desc'}">Ưu tiên cao nhất</option>
+                <option value="title_asc"      th:selected="${currentSort == 'title'     and currentSortDir == 'asc'}">Tên A-Z</option>
+            </select>
+        </div>
+    </section>
+
+    <section class="todos-section">
+        <div class="section-header">
+            <h1 class="section-title">Danh sách công việc</h1>
+            <span class="result-count" th:text="${todos.totalElements} + ' công việc'">0 công việc</span>
+        </div>
+
+        <div class="todo-grid" id="todo-grid">
+
+            <div class="empty-state" th:if="${todos.content.isEmpty()}">
+                <div class="empty-icon">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="15" x2="12" y2="15"/></svg>
+                </div>
+                <div class="empty-title">Chưa có công việc nào</div>
+                <div class="empty-desc">Nhấn "Thêm công việc" để bắt đầu</div>
+                <button class="btn btn-primary" id="btn-empty-add">Thêm công việc</button>
+            </div>
+
+            <div th:each="todo : ${todos.content}"
+                 class="todo-card"
+                 th:classappend="${todo.status.name() == 'DONE' ? ' done' : ''}"
+                 th:attr="data-priority=${todo.priority.name()},
+                          data-id=${todo.id},
+                          data-title=${todo.title},
+                          data-description=${todo.description},
+                          data-status=${todo.status.name()},
+                          data-priority-val=${todo.priority.name()},
+                          data-deadline=${todo.deadline != null ? #temporals.format(todo.deadline, 'yyyy-MM-dd''T''HH:mm') : ''}">
+
+                <div class="card-top">
+                    <div class="card-badges">
+                        <span class="badge"
+                              th:classappend="'badge-priority-' + ${todo.priority.name()}"
+                              th:text="${todo.priorityLabel}"></span>
+                        <span class="badge"
+                              th:classappend="'badge-status-' + ${todo.status.name()}"
+                              th:text="${todo.statusLabel}"></span>
+                        <span class="badge badge-overdue" th:if="${todo.overdue}">Quá hạn</span>
+                    </div>
+                </div>
+
+                <div class="card-title" th:text="${todo.title}"></div>
+
+                <div class="card-description"
+                     th:if="${todo.description != null and !todo.description.isEmpty()}"
+                     th:text="${todo.description}"></div>
+
+                <div class="card-footer">
+                    <div th:if="${todo.deadline != null}"
+                         class="card-deadline"
+                         th:classappend="${todo.overdue ? ' overdue' : ''}">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        <span th:text="${#temporals.format(todo.deadline, 'dd/MM/yyyy')}"></span>
+                    </div>
+                    <div th:unless="${todo.deadline != null}" class="card-deadline">
+                        <span style="color:var(--text-muted)">Không có deadline</span>
+                    </div>
+
+                    <div class="card-actions">
+                        <button class="btn btn-icon btn-toggle" data-action="toggle"
+                                th:title="${todo.status.name() == 'DONE' ? 'Đặt lại' : 'Hoàn thành'}">
+                            <svg th:if="${todo.status.name() != 'DONE'}" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                            <svg th:if="${todo.status.name() == 'DONE'}"  viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </button>
+                        <button class="btn btn-icon btn-edit" data-action="edit" title="Chỉnh sửa">
+                            <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                        <button class="btn btn-icon btn-delete" data-action="delete" title="Xóa">
+                            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pagination-wrapper" th:if="${todos.totalPages > 1}">
+            <button class="page-btn" th:disabled="${!todos.hasPrevious}"
+                    th:attr="data-page=${todos.currentPage - 1}">&#8249;</button>
+
+            <th:block th:each="i : ${#numbers.sequence(0, todos.totalPages - 1)}">
+                <button class="page-btn"
+                        th:classappend="${i == todos.currentPage ? ' active' : ''}"
+                        th:text="${i + 1}"
+                        th:attr="data-page=${i}"></button>
+            </th:block>
+
+            <button class="page-btn" th:disabled="${!todos.hasNext}"
+                    th:attr="data-page=${todos.currentPage + 1}">&#8250;</button>
+
+            <span class="page-info"
+                  th:text="'Trang ' + (${todos.currentPage + 1}) + ' / ' + ${todos.totalPages}"></span>
+        </div>
+    </section>
+
+</main>
+
+<footer class="footer">
+    <p>TodoApp &copy; 2026 — SRT Group Intern Test</p>
+</footer>
+
+<div class="modal-backdrop" id="todo-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 class="modal-title" id="modal-title">Thêm công việc</h2>
+            <button class="modal-close" data-close-modal="todo-modal" aria-label="Đóng">&times;</button>
+        </div>
+        <form id="todo-form" novalidate>
+            <input type="hidden" id="todo-id"/>
+
+            <div class="form-group">
+                <label for="input-title" class="form-label">Tiêu đề <span class="required">*</span></label>
+                <input type="text" id="input-title" class="form-control"
+                       placeholder="Nhập tiêu đề công việc..." maxlength="255" autocomplete="off"/>
+                <div class="form-error" id="error-title"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="input-description" class="form-label">Mô tả</label>
+                <textarea id="input-description" class="form-control"
+                          placeholder="Mô tả chi tiết (không bắt buộc)..." maxlength="2000" rows="3"></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group" style="margin-bottom:0">
+                    <label for="input-status" class="form-label">Trạng thái</label>
+                    <select id="input-status" class="form-control">
+                        <option value="TODO">Chưa làm</option>
+                        <option value="IN_PROGRESS">Đang làm</option>
+                        <option value="DONE">Hoàn thành</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom:0">
+                    <label for="input-priority" class="form-label">Độ ưu tiên</label>
+                    <select id="input-priority" class="form-control">
+                        <option value="LOW">Thấp</option>
+                        <option value="MEDIUM" selected>Trung bình</option>
+                        <option value="HIGH">Cao</option>
+                        <option value="URGENT">Khẩn cấp</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top:18px">
+                <label for="input-deadline" class="form-label">Deadline</label>
+                <input type="datetime-local" id="input-deadline" class="form-control"/>
+                <div class="form-error" id="error-deadline"></div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" data-close-modal="todo-modal">Hủy</button>
+                <button type="submit" class="btn btn-primary" id="btn-submit">
+                    <span id="btn-submit-text">Lưu công việc</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal-backdrop" id="delete-modal" role="dialog" aria-modal="true">
+    <div class="modal" style="max-width:400px">
+        <div class="confirm-dialog">
+            <div class="confirm-title">Xóa công việc?</div>
+            <div class="confirm-desc" id="delete-confirm-desc">
+                Bạn có chắc muốn xóa công việc này không? Hành động này không thể hoàn tác.
+            </div>
+            <input type="hidden" id="delete-todo-id"/>
+            <div class="confirm-actions">
+                <button class="btn btn-secondary" data-close-modal="delete-modal">Hủy</button>
+                <button class="btn btn-danger" id="btn-confirm-delete">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+<div id="app-data"
+     th:attr="data-current-page=${currentPage},
+              data-current-size=${currentSize},
+              data-current-search=${currentSearch != null ? currentSearch : ''},
+              data-current-status=${currentStatus != null ? currentStatus.name() : ''},
+              data-current-priority=${currentPriority != null ? currentPriority.name() : ''},
+              data-current-sort=${currentSort},
+              data-current-sort-dir=${currentSortDir}"
+     style="display:none"></div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>
