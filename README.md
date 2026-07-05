@@ -5,13 +5,13 @@
 
 ---
 
-## 🖥️ Demo
+## Demo
 
-Giao diện dark mode premium với đầy đủ tính năng CRUD, phân trang, tìm kiếm và lọc.
+Giao diện light theme với đầy đủ tính năng CRUD, phân trang, tìm kiếm và lọc.
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Thành phần | Công nghệ |
 |---|---|
@@ -27,25 +27,23 @@ Giao diện dark mode premium với đầy đủ tính năng CRUD, phân trang, 
 
 ---
 
-## ✅ Tính năng
+## Tính năng
 
-### Bắt buộc
-- ✅ Hiển thị danh sách công việc (dạng card grid)
-- ✅ Thêm công việc mới (có validation đầy đủ)
-- ✅ Chỉnh sửa công việc (modal edit)
-- ✅ Xóa công việc (có xác nhận)
-- ✅ Đánh dấu hoàn thành / chưa hoàn thành (toggle 1 click)
-- ✅ Tìm kiếm theo tên/mô tả + lọc theo trạng thái
 
-### Khuyến khích
-- ✅ Phân trang (Pageable) + sắp xếp (nhiều tiêu chí)
-- ✅ Responsive UI (mobile-friendly)
-- ✅ Docker + Docker Compose
-- ✅ Unit Tests (Service + Controller + Repository)
+- Hiển thị danh sách công việc (dạng card grid)
+- Thêm công việc mới (có validation đầy đủ)
+- Chỉnh sửa công việc (modal edit)
+- Xóa công việc (có xác nhận)
+- Đánh dấu hoàn thành / chưa hoàn thành (toggle 1 click)
+- Tìm kiếm theo tên/mô tả + lọc theo trạng thái
+- Phân trang (Pageable) + sắp xếp (nhiều tiêu chí)
+- Responsive UI (mobile-friendly)
+- Docker + Docker Compose
+- Unit Tests (Service + Controller + Repository)
 
 ---
 
-## 📋 Yêu cầu hệ thống
+## Yêu cầu hệ thống
 
 ### Chạy bằng Maven (cách đơn giản nhất)
 - Java 17+
@@ -56,15 +54,13 @@ Giao diện dark mode premium với đầy đủ tính năng CRUD, phân trang, 
 
 ---
 
-## 🚀 Hướng dẫn chạy
+## Hướng dẫn chạy
 
 ### Cách 1: Maven (khuyên dùng)
 
 ```bash
-# Clone hoặc giải nén project
-cd Todo_List_Application
-
-# Chạy ứng dụng
+git clone https://github.com/toantran-tech/ToDoList.git
+cd ToDoList
 mvn spring-boot:run
 ```
 
@@ -75,10 +71,8 @@ Truy cập: **http://localhost:8080**
 ### Cách 2: Build JAR rồi chạy
 
 ```bash
-# Build
 mvn clean package -DskipTests
 
-# Chạy JAR
 java -jar target/todo-app.jar
 ```
 
@@ -87,13 +81,10 @@ java -jar target/todo-app.jar
 ### Cách 3: Docker Compose
 
 ```bash
-# Build và chạy container
 docker-compose up --build
 
-# Chạy ở background
 docker-compose up -d --build
 
-# Dừng
 docker-compose down
 ```
 
@@ -117,25 +108,20 @@ Password: (để trống)
 ## 🧪 Chạy Tests
 
 ```bash
-# Chạy toàn bộ test
 mvn test
 
-# Chạy chỉ unit test service
 mvn test -Dtest=TodoServiceTest
 
-# Chạy chỉ integration test
 mvn test -Dtest=TodoApiControllerTest
 
-# Chạy chỉ repository test
 mvn test -Dtest=TodoRepositoryTest
 
-# Xem báo cáo test
-# Sau khi chạy, mở file: target/surefire-reports/index.html
+
 ```
 
 ---
 
-## 🔌 REST API
+##  REST API
 
 Base URL: `http://localhost:8080/api/todos`
 
@@ -210,7 +196,7 @@ curl -X POST http://localhost:8080/api/todos \
 
 ---
 
-## 📁 Cấu trúc dự án
+## Cấu trúc dự án
 
 ```
 Todo_List_Application/
@@ -245,7 +231,7 @@ Todo_List_Application/
 │   │       ├── data.sql                      # Seed data mẫu
 │   │       ├── templates/index.html          # Thymeleaf UI
 │   │       └── static/
-│   │           ├── css/style.css             # Dark mode CSS
+│   │           ├── css/style.css             # Light theme CSS
 │   │           └── js/app.js                 # Frontend JS
 │   └── test/
 │       └── java/com/srtgroup/todo/
@@ -260,7 +246,7 @@ Todo_List_Application/
 
 ---
 
-## 🔒 Xử lý dữ liệu không hợp lệ
+## Xử lý dữ liệu không hợp lệ
 
 | Trường hợp | Cách xử lý |
 |---|---|
@@ -276,6 +262,6 @@ Todo_List_Application/
 
 ## 👤 Thông tin ứng viên
 
-- **Họ tên**: [Tên của bạn]
-- **Email**: [email@example.com]
-- **GitHub**: [github.com/username]
+- **Họ tên**: Trần Văn Công Toàn
+- **Email**: toan0974102841@gmail.com
+- **GitHub**: https://github.com/toantran-tech
