@@ -105,7 +105,7 @@ Password: (để trống)
 
 ---
 
-## 🧪 Chạy Tests
+##  Chạy Tests
 
 ```bash
 mvn test
@@ -260,7 +260,7 @@ Todo_List_Application/
 
 ---
 
-## 👤 Thông tin ứng viên
+## Thông tin ứng viên
 
 - **Họ tên**: Trần Văn Công Toàn
 - **Email**: toan0974102841@gmail.com
