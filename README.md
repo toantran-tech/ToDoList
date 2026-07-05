@@ -1,4 +1,4 @@
-# 📋 TodoApp — Quản lý công việc
+#  TodoApp — Quản lý công việc
 
 > Bài Test Intern Developer — SRT Group  
 > Ngôn ngữ: **Java 17** | Framework: **Spring Boot 3**
