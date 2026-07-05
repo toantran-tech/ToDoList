@@ -1,6 +1,3 @@
--- ============================================
--- SEED DATA - Dữ liệu mẫu cho Todo App
--- ============================================
 
 INSERT INTO todos (title, description, status, priority, deadline, created_at, updated_at) VALUES
 ('Nghiên cứu Spring Boot 3',

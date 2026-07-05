@@ -92,7 +92,7 @@ Truy cập: **http://localhost:8080**
 
 ---
 
-## 🗄️ H2 Console (xem Database)
+##  H2 Console (xem Database)
 
 Sau khi chạy ứng dụng, truy cập:
 
@@ -250,13 +250,13 @@ Todo_List_Application/
 
 | Trường hợp | Cách xử lý |
 |---|---|
-| Tiêu đề trống | `@NotBlank` → 400 Bad Request + message tiếng Việt |
+| Tiêu đề trống | `@NotBlank` → 400 Bad Request + message |
 | Tiêu đề > 255 ký tự | `@Size(max=255)` → 400 |
 | ID không tồn tại | `TodoNotFoundException` → 404 Not Found |
 | Request body null | `@Valid` → 400 với danh sách lỗi field |
 | Sort field không hợp lệ | Whitelist validation → fallback về `createdAt` |
 | Page/size không hợp lệ | Clamp về giá trị hợp lệ (0, 10) |
-| Lỗi server | `GlobalExceptionHandler` → 500 + message thân thiện |
+| Lỗi server | `GlobalExceptionHandler` → 500 |
 
 ---
 
